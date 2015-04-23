@@ -132,19 +132,15 @@ module RailsEmailPreview
 
     # UI locale
     def set_locale
-      @ui_locale = RailsEmailPreview.locale
-      if !I18n.available_locales.map(&:to_s).include?(@ui_locale.to_s)
-        @ui_locale = :en
-      end
+      @ui_locale = RailsEmailPreview.locale || I18n.default_locale
+
       begin
-        locale_was  = I18n.locale
-        I18n.locale = @ui_locale
         yield if block_given?
       ensure
-        I18n.locale = locale_was
+        I18n.locale = params[:locale] || I18n.default_locale
       end
     end
-
+    
     # Let REP's `cms_email_snippet` know to render an Edit link
     # Todo: Refactoring is especially welcome here
     def cms_edit_links!
