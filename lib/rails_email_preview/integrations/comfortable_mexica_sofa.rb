@@ -5,6 +5,9 @@
 module RailsEmailPreview
   module Integrations
     module ComfortableMexicanSofa
+      
+      class SiteNotFoundError < StandardError; end
+      
       # @return [String] CMS identifier for the current email
       # ModerationMailer#approve -> "moderation_mailer-approve"
       def cms_email_id
@@ -23,7 +26,7 @@ module RailsEmailPreview
         [I18n.locale, I18n.default_locale].compact.each do |locale|
           site = cms_site_class.find_by_locale(locale.to_s)
           unless site
-            raise "rails_email_preview: #{t 'integrations.cms.errors.site_missing', locale: locale}"
+            raise SiteNotFoundError, "rails_email_preview: #{t 'integrations.cms.errors.site_missing', current_locale: locale}"
           end
           snippet = site.snippets.find_by_identifier(snippet_id)
           next unless snippet.try(:content).present?

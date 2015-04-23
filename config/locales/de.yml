@@ -44,4 +44,4 @@ de:
         edit_email: E-Mail bearbeiten
         view_link: Anzeigen
       errors:
-        site_missing: Bitte erstellen Sie eine CMS-Website für %{locale} zuerst. Bei der Verwendung von mehreren Gebietsschemas sollte der Standort gespiegelt werden.
+        site_missing: Bitte erstellen Sie eine CMS-Website für %{current_locale} zuerst. Bei der Verwendung von mehreren Gebietsschemas sollte der Standort gespiegelt werden.
