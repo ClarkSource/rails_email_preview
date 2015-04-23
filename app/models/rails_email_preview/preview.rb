@@ -8,7 +8,11 @@ module RailsEmailPreview
     end
 
     def locales
-      I18n.available_locales
+      begin
+        ::Comfy::Cms::Site.pluck(:locale)
+      rescue
+        I18n.available_locales
+      end
     end
 
     def formats

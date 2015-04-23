@@ -52,7 +52,7 @@ module RailsEmailPreview
             identifier: snippet_id,
             site:       site
         )
-        p         = {site_id: site.id}
+        p         = {site_id: site.id, locale: I18n.locale}
         edit_path = if snippet.persisted?
                       p[:id] = snippet.id
                       if snippet.content.blank? && default_site && (default_snippet = default_site.snippets.find_by_identifier(snippet_id))
