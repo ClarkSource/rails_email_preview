@@ -5,9 +5,9 @@
 module RailsEmailPreview
   module Integrations
     module ComfortableMexicanSofa
-      
+
       class SiteNotFoundError < StandardError; end
-      
+
       # @return [String] CMS identifier for the current email
       # ModerationMailer#approve -> "moderation_mailer-approve"
       def cms_email_id
@@ -64,7 +64,7 @@ module RailsEmailPreview
                         }
                         p[:snippet][:label] = default_snippet.label unless snippet.label.present?
                       end
-                      send :"edit_#{cms_admin_site_snippet_route}_url", p
+                      send :"edit_#{cms_admin_site_snippet_route}_path", p
                     else
                       p[:snippet] = {
                           label:        snippet.label,
