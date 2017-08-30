@@ -1,22 +1,23 @@
-# Rails Email Preview [![Build Status][travis-badge]][travis] [![Test Coverage][coverage-badge]][coverage] [![Code Climate][codeclimate-badge]][codeclimate] [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/glebm/rails_email_preview?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Rails Email Preview [![Build Status][travis-badge]][travis] [![Test Coverage][coverage-badge]][coverage] [![Code Climate][codeclimate-badge]][codeclimate] [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/glebm/rails_email_preview?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Preview email in the browser with this Rails engine. Compatible with Rails 3 and 4.
+Preview email in the browser with this Rails engine. Compatible with Rails 4.2+.
 
-Preview:
+An email review:
+
 ![screenshot][rep-show-screenshot]
 
-List:
+The list of all email previews:
+
 ![screenshot][rep-nav-screenshot]
 
-REP can use your application styles, markup is compatible with [bootstrap 3][rep-show-default-screenshot] by default.
-*These screenshots are using a custom Bootstrap theme*
+REP comes with two themes: a simple standalone theme, and a theme that uses [Bootstrap 3][rep-show-default-screenshot].
 
 ## Installation
 
 Add [![Gem Version][gem-badge]][gem] to Gemfile:
 
 ```ruby
-gem 'rails_email_preview', '~> 0.2.29'
+gem 'rails_email_preview', '~> 2.0.4'
 ```
 
 Add an initializer and the routes:
@@ -112,12 +113,30 @@ REP works with [Comfortable Mexican Sofa CMS](https://github.com/comfy/comfortab
 
 [![screenshot](https://raw.github.com/glebm/rails_email_preview/master/doc/img/rep-edit-sofa.png)](https://github.com/glebm/rails_email_preview/wiki/Edit-Emails-with-Comfortable-Mexican-Sofa)
 
-### Premailer
+### CSS inlining
 
-[Premailer](https://github.com/alexdunae/premailer) automatically translates standard CSS rules into old-school inline styles. Integration can be done by using the <code>before_render</code> hook.
+For CSS inlining, REP supports [Roadie](https://github.com/Mange/roadie) and
+[Premailer](https://github.com/alexdunae/premailer).
+Both of these automatically translate CSS rules into inline styles and turn
+relative URLs into absolute ones.
+
+Roadie additionally extracts styles that cannot be inlined into a separate
+`<style>` tag that is supported by some email clients. For this reason I
+recommend Roadie over Premailer.
+
+Unlike Premailer, Roadie does **not** automatically generate a plain text
+version for HTML emails, but you can use another gem for this, such as
+[plain-david](https://github.com/lucaspiller/plain-david).
+
+#### Roadie
+
+To integrate Roadie with your Rails app, use [roadie-rails](https://github.com/Mange/roadie-rails).
+To integrate roadie-rails with REP, uncomment the relevant option in [the initializer](https://github.com/glebm/rails_email_preview/blob/master/config/initializers/rails_email_preview.rb). *initializer is generated during `rails g rails_email_preview:install`*
+
+#### Premailer
 
 To integrate Premailer with your Rails app you can use either [actionmailer_inline_css](https://github.com/ndbroadbent/actionmailer_inline_css) or [premailer-rails](https://github.com/fphilipe/premailer-rails).
-Simply uncomment the relevant options in [the initializer](https://github.com/glebm/rails_email_preview/blob/master/config/initializers/rails_email_preview.rb). *initializer is generated during `rails g rails_email_preview:install`*
+To integrate either with REP, uncomment the relevant options in [the initializer](https://github.com/glebm/rails_email_preview/blob/master/config/initializers/rails_email_preview.rb). *initializer is generated during `rails g rails_email_preview:install`*
 
 ### I18n
 
@@ -154,7 +173,9 @@ RailsEmailPreview.locale = :de
 
 ### Views
 
-You can render all REP views inside your app layout (this will need styling to look nice if you don't use bootstrap):
+By default REP views will render inside its own layout.
+
+To render all REP views inside your app layout, first set the layout to use in the initializer:
 
 ```ruby
 Rails.application.config.to_prepare do
@@ -163,9 +184,28 @@ Rails.application.config.to_prepare do
 end
 ```
 
-You can `//= require 'rails_email_preview/layout'` REP-specific styles (`@import 'rails_email_preview/layout'` for SASS).
+Then, import REP styles into your `application.css.scss`:
 
-REP also allows you to customize some of the element classes via [`RailsEmailPreview.style`](/lib/rails_email_preview.rb#L34).
+```scss
+@import "rails_email_preview/application";
+```
+
+Alternatively, if you are using Bootstrap 3, `@import "rails_email_preview/application"`, and add the following
+to the initializer:
+
+```ruby
+config.style.merge!(
+    btn_active_class_modifier: 'active',
+    btn_danger_class:          'btn btn-danger',
+    btn_default_class:         'btn btn-default',
+    btn_group_class:           'btn-group btn-group-sm',
+    btn_primary_class:         'btn btn-primary',
+    form_control_class:        'form-control',
+    list_group_class:          'list-group',
+    list_group_item_class:     'list-group-item',
+    row_class:                 'row',
+)
+```
 
 You can also override any individual view by placing a file with the same path in your project's `app/views`,
 e.g. `app/views/rails_email_preview/emails/index.html.slim`.
@@ -200,7 +240,7 @@ Alternatively, to have custom rules just for REP you can:
 ```ruby
 Rails.application.config.to_prepare do
   RailsEmailPreview::ApplicationController.module_eval do
-    before_filter :check_rep_permissions
+    before_action :check_rep_permissions
 
     private
     def check_rep_permissions

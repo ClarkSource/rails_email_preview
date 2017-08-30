@@ -1,3 +1,3 @@
 module RailsEmailPreview
-  VERSION = '0.2.29'
+  VERSION = '2.0.4'
 end

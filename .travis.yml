@@ -1,28 +1,33 @@
 language: ruby
-script: "bundle exec rspec --exclude-pattern 'spec/gemfiles/vendor/**/*'"
+dist: trusty
+sudo: false
 rvm:
-  - "2.2.1"
-  - jruby
-  - rbx
+  - 2.3.1
+  - jruby-9
+  - rbx-3
 gemfile:
-  - spec/gemfiles/Gemfile-rails-3-2
-  - spec/gemfiles/Gemfile-rails-4-0
-  - spec/gemfiles/Gemfile-rails-4-1
-  - spec/gemfiles/Gemfile-rails-4-2
+  - spec/gemfiles/rails_4_2.gemfile
+  - spec/gemfiles/rails_5_0.gemfile
 git:
   submodules: false
 env:
   global:
   - TRAVIS=1
-  # codeclimate.com repo token:
-  - secure: Kh43fq+MfpGNfQ/0IBhMnbzixVS5+K2QFPPwYfcS9ISgMASY2MAbNS1ZaD9HJ5Ynta8tnqS2QodwfQavDYI4tsFXcJ8RXbGK7GX2BKKuhH2ZfwuTGgltg0W1zTJR/18PL6jlMqon4lPnjaQQhis/WhBHqjkxHNIDzYWocZo/hc0=
 matrix:
   allow_failures:
-  - rvm: rbx
-  exclude:
-  - rvm: 2.2.1
-    gemfile: spec/gemfiles/Gemfile-rails-3-2
-cache:
-  bundler: true
-  directories:
-  - spec/gemfiles/vendor
+  - rvm: rbx-3
+sudo: false
+cache: bundler
+bundler_args: --path ../../vendor/bundle --without debug
+
+script:
+- >
+  if [[ "$(rvm current)" = "ruby-"* ]]; then
+    COVERAGE=1 bundle exec rspec --format d
+  else
+    bundle exec rspec --format d
+  fi
+- >
+  if [[ "$(rvm current)" = "ruby-"* ]]; then
+    bundle exec codeclimate-test-reporter
+  fi

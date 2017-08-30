@@ -5,12 +5,10 @@ require 'rails_email_preview/version'
 require 'rails_email_preview/delivery_handler'
 require 'rails_email_preview/view_hooks'
 
-require 'slim'
-require 'slim-rails'
 require 'sass'
-require 'sass-rails'
 require 'request_store'
 require 'turbolinks'
+require 'pathname'
 
 module RailsEmailPreview
 
@@ -32,25 +30,31 @@ module RailsEmailPreview
 
   # some easy visual settings
   mattr_accessor :style
-  self.style = {
-      btn_default_class:     'btn btn-default',
-      btn_active_class:      'btn btn-primary active',
-      btn_group_class:       'btn-group btn-group-sm',
-      list_group_class:      'list-group',
-      list_group_item_class: 'list-group-item',
-      panel_class:           'panel panel-default',
-      panel_body_class:      'panel-body',
-      row_class:             'row',
-      column_class:          'col-sm-%{n}'
+  self.style  = {
+      btn_active_class_modifier: 'rep--btn-active',
+      btn_danger_class:          'rep--btn rep--btn-danger',
+      btn_default_class:         'rep--btn rep--btn-default',
+      btn_group_class:           'rep--btn-group',
+      btn_primary_class:         'rep--btn rep--btn-primary',
+      form_control_class:        'rep--form-control',
+      list_group_class:          'rep--list-group',
+      list_group_item_class:     'rep--list-group__item',
+      row_class:                 'rep--row',
   }
 
   @view_hooks = RailsEmailPreview::ViewHooks.new
   class << self
     # @return [RailsEmailPreview::ViewHooks]
     attr_reader :view_hooks
+
     def preview_classes=(classes)
       @preview_classes = classes
       RailsEmailPreview::Preview.load_all(classes)
+    end
+
+    def find_preview_classes(dir)
+      return [] unless File.directory?(dir)
+      Dir.chdir(dir) { Dir['**/*_preview.rb'].map { |p| p.sub(/\.rb$/, '').camelize } }
     end
 
     def layout=(layout)

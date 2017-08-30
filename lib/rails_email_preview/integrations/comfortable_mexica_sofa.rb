@@ -13,6 +13,7 @@ module RailsEmailPreview
       def cms_email_id
         mailer = respond_to?(:controller) ? controller : self
         "#{mailer.class.name.underscore.gsub('/','_')}-#{action_name}"
+        # "#{mailer.class.name.underscore.gsub('/', '__')}-#{action_name}" from original gem
       end
 
       # @param [Hash] interpolation subject interpolation values
@@ -64,14 +65,16 @@ module RailsEmailPreview
                         }
                         p[:snippet][:label] = default_snippet.label unless snippet.label.present?
                       end
-                      send :"edit_#{cms_admin_site_snippet_route}_path", p
+                      send :"edit_#{cms_admin_site_snippet_route}_url",
+                           p.merge(only_path: true)
                     else
                       p[:snippet] = {
                           label:        snippet.label,
                           identifier:   snippet.identifier,
                           category_ids: [site.categories.find_by_label('email').try(:id)]
                       }
-                      send :"new_#{cms_admin_site_snippet_route}_path", p
+                      send :"new_#{cms_admin_site_snippet_route}_url",
+                           p.merge(only_path: true)
                     end
         <<-HTML.strip.html_safe
           <table class='rep-edit-link' style="width: 100%;"><tr><td>

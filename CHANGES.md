@@ -1,3 +1,86 @@
+## v2.0.4
+
+Depend on `sass` instead of `sass-rails`.
+
+## v2.0.3
+
+Fix a URL generation issue in the CMS integration on Rails 5.
+
+## v2.0.2
+
+* Document roadie-rails support.
+* Fix body iframe height calculation.
+
+## v2.0.1
+
+Drop support for all versions of Rails below 4.2.
+Fix Rails 5 deprecation warnings.
+
+## v1.0.3
+
+Rails 5 support.
+
+## v1.0.2
+
+Added a couple of variables for further default theme customization.
+
+## v1.0.1
+
+Added `RailsEmailPreview.find_preview_classes(dir)` that also finds classes in subdirectories, and changed the default
+initializer to load classes like this:
+
+```ruby
+RailsEmailPreview.preview_classes = RailsEmailPreview.find_preview_classes('app/mailer_previews')
+```
+
+## v1.0.0
+
+**Breaking**: REP now uses a lightweight default theme with no dependencies by default.
+
+If you are using REP with the Bootstrap 3 theme, here are the configuration changes you need to make:
+
+* `@import "rails_email_preview/bootstrap3"` instead of `rails_email_preview/application`.
+* Add the following styles configuration to your REP initializer:
+  
+  ```ruby
+  config.style.merge!(
+      btn_active_class_modifier: 'active',
+      btn_danger_class:          'btn btn-danger',
+      btn_default_class:         'btn btn-default',
+      btn_group_class:           'btn-group btn-group-sm',
+      btn_primary_class:         'btn btn-primary',
+      form_control_class:        'form-control',
+      list_group_class:          'list-group',
+      list_group_item_class:     'list-group-item',
+      row_class:                 'row',
+  )
+  ```
+
+The following REP internal class names have changed:
+
+* `.rep-email-options` is now `.rep--email-options`.
+* `.rep-headers-list` is now `.rep--headers-list`.
+* `.rep-email-show` is now `.rep--email-show`.
+* `.breadcrumb` is now `.rep--breadcrumbs`.
+* `.breadcrumb .active` is now `.rep--breadcrumbs__active`.
+* `.rep-send-to-wrapper` is gone, but now there is `.rep--send-to-form`.
+
+All REP views are now wrapped in a `div` with the `rep--main-container` class. 
+
+REP no longer depends on slim and slim-rails.
+
+Fixed minor email locale handling bugs in navigation and the CMS integration.
+
+## v0.2.31
+
+* Compatibility with namespaced email classes in the CMS.
+
+## v0.2.30
+
+* Compatibility with namespaced email classes.
+* Change Sass stylesheets extensions from `.sass` to `.css.sass`. [#61](https://github.com/glebm/rails_email_preview/issues/61).
+* Spanish translation. Thanks, @epergo!
+
 ## v0.2.29
 
 * Latest CMS compatibility
