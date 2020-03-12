@@ -124,9 +124,11 @@ module RailsEmailPreview
       else
         body_content = body_part.body.to_s
 
-        mail.attachments.each do |attachment|
-          web_url = rails_email_preview.rep_raw_email_attachment_url(params[:preview_id], attachment.filename)
-          body_content.gsub!(attachment.url, web_url)
+        if mail.attachments.any?
+          mail.attachments.each do |attachment|
+            web_url = rails_email_preview.rep_raw_email_attachment_url(params[:preview_id], attachment.filename)
+            body_content.gsub!(attachment.url, web_url)
+          end
         end
 
         body_content.html_safe
@@ -152,7 +154,7 @@ module RailsEmailPreview
         I18n.locale = params[:locale] || I18n.default_locale
       end
     end
-    
+
     # Let REP's `cms_email_snippet` know to render an Edit link
     # Todo: Refactoring is especially welcome here
     def cms_edit_links!
